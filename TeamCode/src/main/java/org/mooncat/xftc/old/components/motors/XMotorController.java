@@ -1,4 +1,4 @@
-package org.mooncat.xftc.components.motors;
+package org.mooncat.xftc.old.components.motors;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 

@@ -1,8 +1,7 @@
-package org.mooncat.xftc.components.sensors.imu;
+package org.mooncat.xftc.old.components.sensors.imu;
 
 import androidx.annotation.NonNull;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.ImuOrientationOnRobot;

@@ -1,4 +1,4 @@
-package org.mooncat.xftc.util;
+package org.mooncat.xftc.old.util;
 
 public class StringConstants {
     public static final String FRONT_LEFT_MOTOR_PATH  = "frontLeft";

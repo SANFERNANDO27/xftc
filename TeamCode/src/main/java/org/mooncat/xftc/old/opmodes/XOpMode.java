@@ -1,4 +1,4 @@
-package org.mooncat.xftc.opmodes;
+package org.mooncat.xftc.old.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.IMU;

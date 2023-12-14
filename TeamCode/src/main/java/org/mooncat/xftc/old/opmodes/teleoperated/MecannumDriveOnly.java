@@ -1,17 +1,16 @@
-package org.mooncat.xftc.opmodes.teleoperated;
+package org.mooncat.xftc.old.opmodes.teleoperated;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.joml.Vector2d;
-import org.mooncat.xftc.components.motors.MotorController;
-import org.mooncat.xftc.components.motors.XMotorController;
-import org.mooncat.xftc.components.sensors.imu.RevHubIMU;
-import org.mooncat.xftc.components.sensors.imu.XIMU;
-import org.mooncat.xftc.opmodes.XOpMode;
-import org.mooncat.xftc.state.StaticRobotState;
-import org.mooncat.xftc.subsystems.drivetrain.MeccanumDrivetrain;
-import org.mooncat.xftc.util.StringConstants;
+import org.mooncat.xftc.old.components.motors.MotorController;
+import org.mooncat.xftc.old.components.sensors.imu.RevHubIMU;
+import org.mooncat.xftc.old.components.sensors.imu.XIMU;
+import org.mooncat.xftc.old.opmodes.XOpMode;
+import org.mooncat.xftc.old.state.StaticRobotState;
+import org.mooncat.xftc.old.subsystems.drivetrain.MeccanumDrivetrain;
+import org.mooncat.xftc.old.util.StringConstants;
 
 @TeleOp
 public class MecannumDriveOnly extends XOpMode {

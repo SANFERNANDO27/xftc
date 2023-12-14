@@ -1,8 +1,8 @@
-package org.mooncat.xftc.subsystems.drivetrain;
+package org.mooncat.xftc.old.subsystems.drivetrain;
 
 import org.joml.Vector2d;
-import org.mooncat.xftc.components.motors.XMotorController;
-import org.mooncat.xftc.components.sensors.imu.XIMU;
+import org.mooncat.xftc.old.components.motors.XMotorController;
+import org.mooncat.xftc.old.components.sensors.imu.XIMU;
 
 import static java.lang.Math.sin;
 import static java.lang.Math.cos;
@@ -37,6 +37,8 @@ public class MeccanumDrivetrain {
 
     public void fieldCentricDrive(Vector2d velocity, double angularVelocity) {
         double heading = imu.getZAngleRad();
+        double cosheading = cos(-heading);
+        double sinheading = sin(-heading);
         Vector2d rotatedVelocity = new Vector2d(
                 velocity.x * cos(-heading) - velocity.y * sin(-heading),
                 velocity.x * sin(-heading) - velocity.y * cos(-heading)
