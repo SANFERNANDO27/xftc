@@ -14,6 +14,7 @@ import org.mooncat.xftc.util.DEFAULT_IMU_PATH
 import kotlin.math.absoluteValue
 import kotlin.math.cos
 import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 
 /**
@@ -30,7 +31,11 @@ class MecanumDriveMechanism(private val frontLeftMotor: DcMotorEx,
                             private val frontRightMotor: DcMotorEx,
                             private val backLeftMotor: DcMotorEx,
                             private val backRightMotor: DcMotorEx,
-                            private val imu: IMU) : DriveMechanism {
+                            private val imu: IMU) : DriveMechanism() {
+
+    var angularSpeed = 1.0
+    var speed = 1.0
+
     /**
      * Given an [OpMode], utilizes its hardware map to locate the necessary components with the
      * library's defaults
@@ -41,18 +46,27 @@ class MecanumDriveMechanism(private val frontLeftMotor: DcMotorEx,
             opMode.hardwareMap.get(DcMotorEx::class.java, DEFAULT_BACK_LEFT_MOTOR_PATH),
             opMode.hardwareMap.get(DcMotorEx::class.java, DEFAULT_BACK_RIGHT_MOTOR_PATH),
             opMode.hardwareMap.get(IMU::class.java, DEFAULT_IMU_PATH)
-    ) {
-    }
+    )
 
-    override val rotationPID = PID(kp = 0.1)
+    override val rotationPID = PID({ output, factor ->
+        val power = min(1.0, max(-1.0, output)) * factor
+
+        frontLeftMotor.power = -power
+        frontRightMotor.power = power
+        backLeftMotor.power = -power
+        backRightMotor.power = power
+
+    }, {
+        return@PID imu.robotYawPitchRollAngles.getPitch(AngleUnit.RADIANS)
+    }, outputFactor = angularSpeed)
 
     override fun drive(velocity: Vector2d, angularVelocity: Double) {
         val maxValue = max(velocity.x.absoluteValue + velocity.y.absoluteValue + angularVelocity.absoluteValue, 1.0)
 
-        frontLeftMotor.power = (velocity.y + velocity.x + angularVelocity) / maxValue
-        frontRightMotor.power = (velocity.y - velocity.x - angularVelocity) / maxValue
-        backLeftMotor.power = (velocity.y - velocity.x + angularVelocity) / maxValue
-        backRightMotor.power = (velocity.y + velocity.x - angularVelocity) / maxValue
+        frontLeftMotor.power = (velocity.x + velocity.y + angularVelocity) / maxValue
+        frontRightMotor.power = (velocity.x - velocity.y - angularVelocity) / maxValue
+        backLeftMotor.power = (velocity.x - velocity.y + angularVelocity) / maxValue
+        backRightMotor.power = (velocity.x + velocity.y - angularVelocity) / maxValue
     }
 
     override fun fieldOrientedDrive(velocity: Vector2d, angularVelocity: Double) {
@@ -61,27 +75,16 @@ class MecanumDriveMechanism(private val frontLeftMotor: DcMotorEx,
         val sinTheta = sin(negativeHeading)
 
         val rotatedVelocity = Vector2d(
-                velocity.x * cosTheta - velocity.y * sinTheta,
-                velocity.x * sinTheta - velocity.y * cosTheta
+                velocity.y * cosTheta - velocity.x * sinTheta,
+                velocity.y * sinTheta - velocity.x * cosTheta
         )
 
         val maxValue = max(rotatedVelocity.x.absoluteValue + rotatedVelocity.y.absoluteValue + angularVelocity.absoluteValue, 1.0)
 
-        frontLeftMotor.power = (rotatedVelocity.y + rotatedVelocity.x + angularVelocity) / maxValue
-        frontRightMotor.power = (rotatedVelocity.y - rotatedVelocity.x - angularVelocity) / maxValue
-        backLeftMotor.power = (rotatedVelocity.y - rotatedVelocity.x + angularVelocity) / maxValue
-        backRightMotor.power = (rotatedVelocity.y + rotatedVelocity.x - angularVelocity) / maxValue
-    }
-
-    override fun rotate(radians: Double, speed: Double) {
-        val output = rotationPID.calculate(imu.robotYawPitchRollAngles.getPitch(AngleUnit.RADIANS), radians)
-        val power = max(output * speed, 1.0)
-
-        frontLeftMotor.power = power
-        frontRightMotor.power = -power
-        backLeftMotor.power = power
-        backRightMotor.power = -power
-
+        frontLeftMotor.power = (rotatedVelocity.x + rotatedVelocity.y + angularVelocity) / maxValue
+        frontRightMotor.power = (rotatedVelocity.x - rotatedVelocity.y - angularVelocity) / maxValue
+        backLeftMotor.power = (rotatedVelocity.x - rotatedVelocity.y + angularVelocity) / maxValue
+        backRightMotor.power = (rotatedVelocity.x + rotatedVelocity.y - angularVelocity) / maxValue
     }
 
 }
